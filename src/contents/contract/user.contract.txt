@@ -1,0 +1,26 @@
+export default class UserContract {
+    static data() {
+        return {
+            id: true,
+            username: true,
+            email: true,
+            hashedPassword: true,
+            isActive: true,
+            passwordChangeDate: true,
+            confirmToken: true,
+            forgetPasswordToken: true,
+            forgetPasswordTokenExpired: true,
+            emailVerified: true,
+            userComputer: true,
+            IpAddress: true,
+            role: true,
+            salt: true,
+            lastConnexion: true,
+            isDeleted: true,
+            auth2Fa: true,
+            RefreshToken: true,
+            createdAt: true,
+            updatedAt: true,
+        };
+    }
+}

@@ -1,0 +1,25 @@
+import { RoleEnum } from "../../domain/enums/role.enum";
+import { RefreshTokenInterface } from "./refreshToken.interface";
+
+export interface UserInterface {
+    id: string;
+    username: string;
+    email: string;
+    hashedPassword: string;
+    isActive: boolean;
+    passwordChangeDate: Date | null;
+    confirmToken?: string;
+    forgetPasswordToken?: string;
+    forgetPasswordTokenExpired: Date | null | undefined;
+    emailVerified: boolean;
+    userComputer?: string;
+    IpAddress?: string;
+    role: RoleEnum;
+    salt: string;
+    lastConnexion: Date;
+    isDeleted?: boolean;
+    auth2Fa?: boolean;
+    RefreshToken?: RefreshTokenInterface[];
+    createdAt: Date;
+    updatedAt?: Date;
+}

@@ -1,0 +1,22 @@
+import {PrismaClient} from "opticore-core-module";
+import UserContract from "../contracts/user.contract";
+
+export default async function FetchUserByEmailUsecase(email: string): Promise<any> {
+    return await prisma.user.findUnique({
+        where: {
+            email,
+        },
+        select: {
+            id: UserContract.data().id,
+            role: UserContract.data().role,
+            username: UserContract.data().username,
+            email: UserContract.data().email,
+            isActive: UserContract.data().isActive,
+            emailVerified: UserContract.data().emailVerified,
+            hashedPassword: UserContract.data().hashedPassword,
+            salt: UserContract.data().salt,
+            confirmToken: UserContract.data().confirmToken,
+            forgetPasswordTokenExpired: UserContract.data().forgetPasswordTokenExpired,
+        }
+    });
+}

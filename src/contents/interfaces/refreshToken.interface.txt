@@ -1,0 +1,12 @@
+import {UserInterface} from "./user.interface";
+
+export interface RefreshTokenInterface {
+    id: String;
+    userId?:  String;
+    hashedToken: String;
+    revoked: Boolean;
+    expiresToken: Date | null
+    User?: UserInterface
+    createdAt: Date;
+    updatedAt: Date | null;
+}

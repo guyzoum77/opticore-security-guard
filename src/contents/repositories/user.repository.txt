@@ -1,0 +1,14 @@
+import {PrismaClient} from "opticore-core-module";
+
+const prisma = new PrismaClient();
+
+/**
+ * You can create any user query that you want right here
+ *
+ * You can add any model colum that you want to show in the request.
+ * Example: select: { id: UserContract.data().id }
+ *
+ */
+export default class UserRepository {
+
+}
