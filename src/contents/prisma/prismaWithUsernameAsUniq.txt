@@ -1,0 +1,41 @@
+model User {
+    id                         String         @id @unique @default(uuid())
+    username                   String         @unique
+    email                      String         @db.VarChar(255)
+    hashedPassword             String         @db.VarChar(255)
+    isActive                   Boolean        @default(false)
+    passwordChangeDate         DateTime?
+    confirmToken               String?        @db.VarChar(255)
+    forgetPasswordToken        String?        @db.VarChar(255)
+    forgetPasswordTokenExpired DateTime?
+    emailVerified              Boolean        @default(false)
+    userComputer               String?
+    IpAddress                  String?
+    role                       Role
+    salt                       String?
+    lastConnexion              DateTime?
+    isDeleted                  Boolean?       @default(false)
+    auth2Fa                    Boolean?       @default(false)
+    RefreshToken               RefreshToken[]
+    createdAt                  DateTime       @default(now())
+    updatedAt                  DateTime?      @updatedAt
+}
+
+model RefreshToken {
+    id           String    @id @unique @default(uuid())
+    userId       String?
+    hashedToken  String    @db.VarChar(255)
+    revoked      Boolean   @default(false)
+    expiresToken DateTime?
+    User         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime? @updatedAt
+}
+
+enum Role {
+    BARBER
+    BARBER_ADMIN
+    BARBER_MANAGER
+    BARBER_SUPER_ADMIN
+    CUSTOMER
+}

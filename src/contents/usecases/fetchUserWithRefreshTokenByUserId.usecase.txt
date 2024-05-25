@@ -1,4 +1,4 @@
-import {PrismaClient} from "opticore-core-module";
+import {PrismaClient, prisma} from "opticore-core-module";
 import UserContract from "../contracts/user.contract";
 
 export default class FetchUserWithRefreshTokenByUserIdUsecase {

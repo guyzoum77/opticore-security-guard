@@ -1,7 +1,10 @@
 {
   "name": "opticore-security-guard",
-  "version": "1.0.0",
-  "main": "src/index.ts",
+  "version": "1.0.16",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsup"
