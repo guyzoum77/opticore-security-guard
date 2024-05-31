@@ -54,7 +54,6 @@ export async function SecurityGuard(): Promise<void> {
             }
         }
     }
-
     const askFieldUnicity: symbol | string[] = await clackCLI.select({
         message: "Choose which field do you want as unique :",
         initialValue: ["email"],
