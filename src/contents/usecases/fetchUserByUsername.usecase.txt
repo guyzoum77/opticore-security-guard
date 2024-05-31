@@ -1,8 +1,10 @@
-import {PrismaClient, prisma} from "opticore-core-module";
+import {PrismaClient} from "opticore-core-module";
 import UserContract from "../contracts/user.contract";
 
 export default class FetchUserByUsernameUsecase {
     static async fetchUserByUsername (username: string): Promise<any> {
+        const prisma = new PrismaClient();
+
         return await prisma.user.findUnique({
             where: {
                 username,

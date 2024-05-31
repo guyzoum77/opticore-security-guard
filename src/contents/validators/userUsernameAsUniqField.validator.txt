@@ -1,0 +1,14 @@
+/**
+ * @Return a specific constraint on field that you want.
+ *
+ * You can define any field constraint validator that you want
+ * Or you can create another schema validator.
+ */
+export default class UserValidator {
+    static validateSchema () {
+        return {
+            username: 'required|string',
+            password: 'required|string',
+        }
+    }
+}

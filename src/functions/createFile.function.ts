@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import colors from "ansi-colors";
 
-export function createFileFunction(keysPath: string, fileContent: string) {
+export function createFileFunction(keysPath: string, fileContent: string): void {
     let getFileContent: any;
     try {
         getFileContent = fs.readFileSync(fileContent, "utf8");
@@ -16,7 +16,7 @@ export function createFileFunction(keysPath: string, fileContent: string) {
             {flag: "a+"},
         );
     } catch (err: any) {
-        console.log(`${colors.bgRed(`${colors.white(`${err.message}`)}`)}`);
+        console.log(`Error writing file : ${colors.bgRed(`${colors.white(`${err.message}`)}`)}`);
         process.exit(0);
     }
 }

@@ -33,9 +33,7 @@ model RefreshToken {
 }
 
 enum Role {
-    BARBER
-    BARBER_ADMIN
-    BARBER_MANAGER
-    BARBER_SUPER_ADMIN
-    CUSTOMER
+    ROLE_USER
+    ROLE_ADMIN
+    ROLE_SUPER_ADMIN
 }
