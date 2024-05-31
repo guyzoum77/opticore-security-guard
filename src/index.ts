@@ -10,56 +10,71 @@ import fs from "fs";
 import {createFileFunction} from "./functions/createFile.function";
 import {messageInfoUtils} from "./utils/messageInfo.utils";
 
-export async function SecurityGuard() {
+export async function SecurityGuard(): Promise<void> {
     let ora = (await import("ora")).default;
     const exec = promisify(cp.exec);
 
     const currentPath: string = process.cwd();
     const projectPath: string = path.join(currentPath);
 
-    const askFieldUnicity = await clackCLI.select({
-        message: "Choose which field do you want as unique :",
-        initialValue: ["email"],
-        options: [
-            { label: "Email", value: ["email"], hint: 'recommended' },
-            { label: "username", value: ["username"] },
-        ]
-    });
-    if (clackCLI.isCancel(askFieldUnicity)) {
-        console.log(`${colors.bgRed(`${colors.white('Operation cancelled.')}`)}`);
-        process.exit(0);
-    }
-    const prismaPath: string = path.join(__dirname, "../dist/contents/prisma");
+    let fileContent: string = fs.readFileSync(path.join(process.cwd())+"/prisma/schema.prisma", 'utf8');
+    const userModelFound: RegExpMatchArray | null = fileContent.match(/model User/g);
+    const refreshTokenModelFound: RegExpMatchArray | null = fileContent.match(/model RefreshToken/g);
+    const roleEnumFound: RegExpMatchArray | null = fileContent.match(/enum Role/g);
 
-    // verify if model exist
-    // if (fs.existsSync(path.join(process.cwd())+"/prisma/schema.prisma")) {
-    //     let fileContent: string = fs.readFileSync(path.join(process.cwd())+"/prisma/schema.prisma", 'utf8');
-    //     const fileFound: RegExpMatchArray | null = fileContent.match(/model User/g);
-    //
-    //     if (fileFound) {
-    //         console.info(`${colors.bgCyan(`We can't process this action because user model is already exist.`)}`);
-    //         process.exit(0);
-    //     }
-    // }
+    if (fs.existsSync(path.join(process.cwd())+"/prisma/schema.prisma")
+        && (userModelFound && refreshTokenModelFound && roleEnumFound)) {
+        const processInstallation: symbol | string[] = await clackCLI.select({
+            message: "We notice that you already have the model user, " +
+                "refreshToken and enum role, so we ask you to confirm if you want to continue" +
+                " the installation in order to set up the security guard system :",
+            initialValue: ["yes"],
+            options: [
+                { label: "Yes, i want it", value: ["yes"], hint: 'recommended' },
+                { label: "No", value: ["no"] },
+            ]
+        });
 
-
-    if (askFieldUnicity[0] === "email") {
-        console.log(`\nYou chosen ${colors.cyan(`${askFieldUnicity[0]}`)} as unique field in user model.\n`);
-        try {
-            updatePrismaSchemaFunction(projectPath+"/prisma/schema.prisma", prismaPath+"/prismaWithEmailAsUniq.txt");
-            await exec(`npx prisma generate`, { cwd: projectPath });
-        } catch (err: any) {
-            console.error(`${colors.bgRed(`${colors.white(err.message)}`)}`);
-            process.exit(1);
+        if (clackCLI.isCancel(processInstallation)) {
+            console.log(`${colors.bgRed(`${colors.white('Operation cancelled.')}`)}`);
+            process.exit(0);
         }
-    } else {
-        console.log(`You chosen ${colors.cyan(`${askFieldUnicity[0]}`)} as unique field in user model.`);
-        try {
-            updatePrismaSchemaFunction(projectPath+"/prisma/schema.prisma", prismaPath+"/prismaWithUsernameAsUniq.txt");
-            await exec(`npx prisma generate`, { cwd: projectPath });
-        } catch (err: any) {
-            console.error(`${colors.bgRed(`${colors.white(err.message)}`)}`);
-            process.exit(1);
+
+    }
+    else {
+        const askFieldUnicity: symbol | string[] = await clackCLI.select({
+            message: "Choose which field do you want as unique :",
+            initialValue: ["email"],
+            options: [
+                { label: "Email", value: ["email"], hint: 'recommended' },
+                { label: "username", value: ["username"] },
+            ]
+        });
+        if (clackCLI.isCancel(askFieldUnicity)) {
+            console.log(`${colors.bgRed(`${colors.white('Operation cancelled.')}`)}`);
+            process.exit(0);
+        }
+        const prismaPath: string = path.join(__dirname, "../dist/contents/prisma");
+
+        // verify if model exist
+        if (askFieldUnicity[0] === "email") {
+            console.log(`\nYou chosen ${colors.cyan(`${askFieldUnicity[0]}`)} as unique field in user model.\n`);
+            try {
+                updatePrismaSchemaFunction(projectPath+"/prisma/schema.prisma", prismaPath+"/prismaWithEmailAsUniq.txt");
+                await exec(`npx prisma generate`, { cwd: projectPath });
+            } catch (err: any) {
+                console.error(`${colors.bgRed(`${colors.white(err.message)}`)}`);
+                process.exit(1);
+            }
+        } else {
+            console.log(`You chosen ${colors.cyan(`${askFieldUnicity[0]}`)} as unique field in user model.`);
+            try {
+                updatePrismaSchemaFunction(projectPath+"/prisma/schema.prisma", prismaPath+"/prismaWithUsernameAsUniq.txt");
+                await exec(`npx prisma generate`, { cwd: projectPath });
+            } catch (err: any) {
+                console.error(`${colors.bgRed(`${colors.white(err.message)}`)}`);
+                process.exit(1);
+            }
         }
     }
 
@@ -74,7 +89,7 @@ export async function SecurityGuard() {
 
     if (!fs.existsSync(userValidatorPath)) {
         fs.mkdirSync(userValidatorPath);
-    } if (!fs.existsSync(userContractPath)) {
+    }if (!fs.existsSync(userContractPath)) {
         fs.mkdirSync(userContractPath);
     } if (!fs.existsSync(userRepositoryPath)) {
         fs.mkdirSync(userRepositoryPath);
