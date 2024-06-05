@@ -1,5 +1,6 @@
 import fs from "fs";
 import colors from "ansi-colors";
+import {instagram} from "gradient-string";
 
 export function updatePrismaSchemaFunction(dirSource: any, content: any): void {
     let getFileContent: any;

@@ -1,5 +1,6 @@
 import colors from "ansi-colors";
 export function messageInfoUtils(): void {
+    console.log(`\n${colors.cyan(`The auth component has been installed.`)}`);
     console.log(`${colors.cyan(`Updated:`)} prisma/schema.prisma`);
     console.log(`${colors.cyan(`Created:`)} ${colors.green(`/src/application/validators/user.validator.ts`)}`);
     console.log(`${colors.cyan(`Created:`)} ${colors.green(`/src/persistence/contracts/user.contract.ts`)}`);

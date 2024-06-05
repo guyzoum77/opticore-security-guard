@@ -1,10 +1,14 @@
-OptiCore Auth guard Component
+OptiCore User Authenticate Component
 ============================
 **It** is a **component of OptiCoreJs framework** that allow to create user model, refreshToken model and role enum allows you to create models in order to set up an authentication system based on the user's role.
 
+<p align="center">
+
+<a href="https://github.com/mochajs/mocha/actions?query=workflow%3ATests+branch%3Amaster"><img src="https://github.com/mochajs/mocha/workflows/Tests/badge.svg?branch=master" alt="GitHub Actions Build Status"></a></p>
+
 Install
 -------------
-npm i opticore-auth-schema-model
+npm i opticore-user-authenticate-component
 
 
 Usage
@@ -14,12 +18,12 @@ run:
 
 Security Issues
 ---------------
-https://github.com/guyzoum77/opticore-auth-schema-model/issues
+https://github.com/guyzoum77/opticore-user-authenticate-component/issues
 
 Contributing
 ------------
-OptiCore Auth guard Component is an Open Source, so if you would like to contribute, you're welcome. Clone repository and open pull request.
+OptiCore User Authenticate Component is an Open Source, so if you would like to contribute, you're welcome. Clone repository and open pull request.
 
 About
 --------
-OptiCore Auth guard Component is led by **Guy-serge Kouacou** and supported by **Guy-serge Kouacou**
+OptiCore User Authenticate Component is led by **Guy-serge Kouacou** and supported by **Guy-serge Kouacou**
