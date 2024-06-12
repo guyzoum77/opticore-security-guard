@@ -1,22 +1,20 @@
 #!/usr/bin/env node
 
-import clackCLI from "@clack/prompts";
-import { promisify } from "util";
-import cp from "child_process";
 import colors from "ansi-colors";
 import path from "path";
-import {updatePrismaSchemaFunction} from "./functions/updatePrismaSchema.function";
 import fs from "fs";
-import {messageInfoUtils} from "./utils/messageInfo.utils";
+import {MessageInfoUtils} from "./utils/messageInfo.utils";
 import {welcomeMessage} from "./utils/welcomeMessage";
 import {createFileWithSpinnerFunction} from "./functions/createFileWithSpinner";
 import {filesComponentsUtils} from "./utils/filesComponents.utils";
 import {promptUserConfirmationFunction} from "./functions/promptUserConfirmation.function";
 import {promptUniqueFieldFunction} from "./functions/promptUniqueField.function";
 import {checkExistingModelsFunction} from "./functions/checkExistingModels.function";
+import {checkDataSourceProviderFunction} from "./functions/checkDataSourceProvider.function";
+import {HandleProviderUtils} from "./utils/handleProvider.utils";
+import {deleteRecursivelyDirUtils} from "./utils/deleteRecursivelyDir.utils";
 
 export async function SecurityGuard(): Promise<void> {
-    const exec = promisify(cp.exec);
     welcomeMessage();
 
     const currentPath: string = process.cwd();
@@ -32,14 +30,18 @@ export async function SecurityGuard(): Promise<void> {
                     for (const task of tasks) {
                         await createFileWithSpinnerFunction(task);
                     }
-                    messageInfoUtils();
+                    MessageInfoUtils.messageInfoUtils();
                     process.exit();
                 } catch (err: any) {
                     console.error(`${colors.bgRed(`${colors.white(err.message)}`)}`);
+                    deleteRecursivelyDirUtils();
                     process.exit();
                 }
             })()
-            : ((): void => { process.exit(); })();
+            : ((): void => {
+                deleteRecursivelyDirUtils();
+                process.exit();
+            })();
     } else {
         const prismaPathTemplate: string = path.join(__dirname, "../dist/contents/prisma");
         const askFieldUnicity: string | void = await promptUniqueFieldFunction();
@@ -48,14 +50,33 @@ export async function SecurityGuard(): Promise<void> {
                 console.log(`\nYou chosen ${colors.cyan(`${askFieldUnicity}`)} as unique field in user model.\n`);
                 try {
                     const tasks = filesComponentsUtils(askFieldUnicity);
-                    updatePrismaSchemaFunction(prismaPath, prismaPathTemplate + "/prismaWithEmailAsUniq.txt");
-                    for (const task of tasks) {
-                        await createFileWithSpinnerFunction(task);
+                    const checkPrismaProvider = checkDataSourceProviderFunction(prismaPath);
+                    for (const provider of checkPrismaProvider) {
+                        if (provider.mysql && provider.mysql[0] === `provider = "mysql"`) {
+                            await HandleProviderUtils.providerWithEmailAsUniqField(
+                                prismaPathTemplate + "/prismaWithEmailAsUniq.txt",
+                                tasks,
+                                prismaPath
+                            );
+                        }
+                        if (provider.mongodb && provider.mongodb[0] === `provider = "mongodb"`) {
+                            await HandleProviderUtils.providerWithEmailAsUniqField(
+                                prismaPathTemplate + "/prismaMongoModelWithEmailAsUniq.txt",
+                                tasks,
+                                prismaPath
+                            );
+                        }
+                        if (provider.postgresql && provider.postgresql[0] === `provider = "postgresql"`) {
+                            await HandleProviderUtils.providerWithEmailAsUniqField(
+                                prismaPathTemplate + "/prismaWithEmailAsUniq.txt",
+                                tasks,
+                                prismaPath
+                            );
+                        }
                     }
-                    messageInfoUtils();
-                    process.exit();
                 } catch (err: any) {
                     console.error(`${colors.bgRed(`${colors.white(err.message)}`)}`);
+                    deleteRecursivelyDirUtils();
                     process.exit();
                 }
             })()
@@ -63,14 +84,36 @@ export async function SecurityGuard(): Promise<void> {
                 console.log(`You chosen ${colors.cyan(`${askFieldUnicity}`)} as unique field in user model.`);
                 try {
                     const tasks = filesComponentsUtils(askFieldUnicity);
-                    updatePrismaSchemaFunction(prismaPath, prismaPathTemplate + "/prismaWithUsernameAsUniq.txt");
-                    await exec(`npx prisma generate`, {cwd: projectPath});
-                    for (const task of tasks) {
-                        await createFileWithSpinnerFunction(task);
+                    const checkPrismaProvider = checkDataSourceProviderFunction(prismaPath);
+                    for (const provider of checkPrismaProvider) {
+                        if (provider.mysql && provider.mysql![0] === `provider = "mysql"`) {
+                            await HandleProviderUtils.providerWithUsernameAsUniqField(
+                                prismaPathTemplate + "/prismaWithUsernameAsUniq.txt",
+                                tasks,
+                                prismaPath,
+                                projectPath
+                            );
+                        }
+                        if (provider.mongodb && provider.mongodb![0] === `provider = "mongodb"`) {
+                            await HandleProviderUtils.providerWithUsernameAsUniqField(
+                                prismaPathTemplate + "/prismaMongoModelWithUsernameAsUniq.txt",
+                                tasks,
+                                prismaPath,
+                                projectPath
+                            );
+                        }
+                        if (provider.postgresql && provider.postgresql![0] === `provider = "postgresql"`) {
+                            await HandleProviderUtils.providerWithUsernameAsUniqField(
+                                prismaPathTemplate + "/prismaWithUsernameAsUniq.txt",
+                                tasks,
+                                prismaPath,
+                                projectPath
+                            );
+                        }
                     }
-                    messageInfoUtils();
                 } catch (err: any) {
                     console.error(`${colors.bgRed(`${colors.white(err.message)}`)}`);
+                    deleteRecursivelyDirUtils();
                     process.exit(1);
                 }
             })();

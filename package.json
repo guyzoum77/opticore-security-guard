@@ -1,6 +1,6 @@
 {
-  "name": "opticore-user-authenticate-component",
-  "version": "1.0.38",
+  "name": "opticore-authenticate-user-component",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

@@ -1,0 +1,39 @@
+model User {
+    id                         String         @id @default(auto()) @map("_id") @db.ObjectId
+    username                   String         @db.String
+    email                      String         @unique
+    hashedPassword             String         @db.String
+    isActive                   Boolean        @default(false)
+    passwordChangeDate         DateTime?
+    confirmToken               String?        @db.String
+    forgetPasswordToken        String?        @db.String
+    forgetPasswordTokenExpired DateTime?
+    emailVerified              Boolean        @default(false)
+    userComputer               String?
+    IpAddress                  String?
+    role                       Role
+    salt                       String?
+    lastConnexion              DateTime?
+    isDeleted                  Boolean?       @default(false)
+    auth2Fa                    Boolean?       @default(false)
+    RefreshToken               RefreshToken[]
+    createdAt                  DateTime       @default(now())
+    updatedAt                  DateTime?      @updatedAt
+}
+
+model RefreshToken {
+    id           String     @id @default(auto()) @map("_id") @db.ObjectId
+    userId       String?    @db.ObjectId
+    hashedToken  String     @db.String
+    revoked      Boolean    @default(false)
+    expiresToken DateTime?
+    User         User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime?  @updatedAt
+}
+
+enum Role {
+    ROLE_USER
+    ROLE_ADMIN
+    ROLE_SUPER_ADMIN
+}
