@@ -19,7 +19,7 @@ export async function SecurityGuard(): Promise<void> {
 
     const currentPath: string = process.cwd();
     const projectPath: string = path.join(currentPath);
-    const prismaPath: string = projectPath + "/prisma/schema.prisma";
+    const prismaPath: string  = projectPath + "/prisma/schema.prisma";
 
     if (fs.existsSync(prismaPath) && (await checkExistingModelsFunction(prismaPath))) {
         let confirmAction: void | string = await promptUserConfirmationFunction();
